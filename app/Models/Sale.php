@@ -24,7 +24,7 @@ class Sale extends Model
         return $this->belongsTo(Store::class);
     }
 
-    public function user(): BelongsTo
+    public function cashier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
