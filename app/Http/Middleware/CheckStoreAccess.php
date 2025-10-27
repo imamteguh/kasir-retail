@@ -4,17 +4,22 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class CheckStoreAccess
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
+        $storeId = $request->route('store_id');
+        $user = Auth::user();
+
+        if (!$user->stores()->where('id', $storeId)->exists()) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke toko ini.'], 403);
+        }
+
+        session(['store_id' => $storeId]);
+        app()->instance('store', $user->stores()->find($storeId));
+
         return $next($request);
     }
 }

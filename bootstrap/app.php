@@ -11,7 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'store.context' => \App\Http\Middleware\SetStoreContext::class,
+            'subscription.active' => \App\Http\Middleware\CheckSubscription::class,
+            'check.store.access' => \App\Http\Middleware\CheckStoreAccess::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
