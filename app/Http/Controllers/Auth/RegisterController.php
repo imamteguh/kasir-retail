@@ -23,8 +23,9 @@ class RegisterController extends Controller
         $request->validate([
             'name'       => 'required|string|max:100',
             'email'      => 'required|email|unique:users',
-            'password'   => 'required|min:6|confirmed',
+            'password'   => 'required|min:8|confirmed',
             'store_name' => 'required|string|max:150',
+            'terms'      => 'required'
         ]);
 
         // Buat user
@@ -55,7 +56,21 @@ class RegisterController extends Controller
 
         // Auto-login
         Auth::login($user);
-
+        $user->sendEmailVerificationNotification();
         return redirect()->route('dashboard')->with('success', 'Pendaftaran berhasil! Selamat mencoba versi trial selama 7 hari.');
+    }
+
+    public function verify(Request $request, $id, $hash)
+    {
+        $user = User::findOrFail($id);
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            abort(403);
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Email successfully verified!!');
     }
 }
