@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
@@ -16,8 +18,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        $roles = config('aplikasi.roles');
-        return view('users.index', compact('roles'));
+        return response()->json([
+            'success' => true,
+            'message' => 'success',
+            'data' => UserResource::collection(
+                User::with(['stores.currentSubscription.plan'])->get()
+            )
+        ]);
     }
 
     /**
@@ -26,18 +33,31 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:'.User::class],
-            'password' => ['required'],
-            'role' => ['required']
+            'password' => ['required', 'string', Password::defaults()],
+            'role' => ['required', 'string', 'in:super_admin,owner,cashier']
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
-
-        User::create($validated);
+        $user = User::create($validated);
         return response()->json([
             'success' => true,
-            'message' => 'User created successfully'
+            'message' => 'success',
+            'data' => new UserResource($user)
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(User $user)
+    {
+        $user->load(['stores.currentSubscription.plan']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'success',
+            'data' => new UserResource($user)
         ]);
     }
 
@@ -50,7 +70,7 @@ class UserController extends Controller
             'name' => ['required'],
             'email' => ['required', 'email', Rule::unique(User::class)->ignore($user->id)],
             'password' => ['nullable', 'string', Password::defaults()],
-            'role' => ['required'],
+            'role' => ['required', 'string', 'in:super_admin,owner,cashier'],
         ]);
 
         if ($request->filled('password')) {
@@ -58,11 +78,12 @@ class UserController extends Controller
         } else {
             unset($validated['password']);
         }
-        
+
         $user->update($validated);
         return response()->json([
             'success' => true,
-            'message' => 'User updated successfully'
+            'message' => 'success',
+            'data' => new UserResource($user)
         ]);
     }
 
@@ -77,7 +98,8 @@ class UserController extends Controller
         }
         return response()->json([
             'success' => true,
-            'message' => 'User deleted successfully'
+            'message' => 'success',
+            'data' => new UserResource($user)
         ]);
     }
 }

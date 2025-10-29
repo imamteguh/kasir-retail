@@ -1,6 +1,8 @@
 @php
 $user = Auth::user();
-$initial = strtoupper(substr($user->name, 0, 1));
+// Ambil initial 2 huruf pertama dari nama pengguna
+$initial = strtoupper(substr($user->name, 0, 2));
+$role = config('aplikasi.roles');
 @endphp
 <nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
@@ -45,7 +47,7 @@ $initial = strtoupper(substr($user->name, 0, 1));
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-0">{{ $user->name }}</h6>
-                                    <small class="text-body-secondary uc-first">Super Admin</small>
+                                    <small class="text-body-secondary uc-first">{{ $role[$user->role] }}</small>
                                 </div>
                             </div>
                         </a>
