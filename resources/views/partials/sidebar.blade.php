@@ -70,22 +70,28 @@
                 </div>
             </a>
         </li>
-        <li class="menu-item {{ request()->is('users*') ? 'active' : '' }}">
-            <a href="/users" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div class="text-truncate">
-                    Users
-                </div>
+        <li class="menu-item {{ request()->is('masters/*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle ">
+                <i class="menu-icon tf-icons bx bx-layer"></i>
+                <div class="text-truncate">Master Data</div>
             </a>
-        </li>
-        <!-- Settings -->
-        <li class="menu-item {{ request()->is('settings*') ? 'active' : '' }}">
-            <a href="/settings" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-cog"></i>
-                <div class="text-truncate">
-                    Settings
-                </div>
-            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->is('masters/products*') ? 'active' : '' }}">
+                    <a href="/masters/products" class="menu-link">
+                        <div class="text-truncate">Products</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->is('masters/categories*') ? 'active' : '' }}">
+                    <a href="/masters/categories" class="menu-link">
+                        <div class="text-truncate">Categories</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->is('masters/units*') ? 'active' : '' }}">
+                    <a href="/masters/units" class="menu-link">
+                        <div class="text-truncate">Units</div>
+                    </a>
+                </li>
+            </ul>
         </li>
     </ul>
 </aside>

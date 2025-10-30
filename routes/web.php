@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Masters\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,15 +26,20 @@ Route::middleware(['guest'])->group(function () {
 
 Route::get('email/verify/{id}/{hash}', [RegisterController::class, 'verify'])->middleware(['auth', 'signed'])->name('verification.verify');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'store.context', 'subscription.active'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
     Route::view('dashboard', 'dashboard')->name('dashboard');
-
-    Route::controller(UserController::class)->group(function() {
-        Route::get('/users', 'index')->name('users.index');
-        Route::post('/users', 'store')->name('users.store');
-        Route::put('/users/{user}', 'update')->name('users.update');
-        Route::delete('/users/{user}', 'destroy')->name('users.destroy');
+    
+    Route::group(['prefix' => 'masters'], function () {
+        Route::resource('categories', CategoryController::class);
     });
+});
+
+Route::middleware(['auth', 'store.context', 'subscription.active'])
+    ->prefix('api')
+    ->group(function () {
+    Route::apiResource('categories', \App\Http\Controllers\API\Masters\CategoryController::class)->except(['show']);
+    Route::apiResource('units', \App\Http\Controllers\API\Masters\UnitController::class)->except(['show']);
+    Route::apiResource('products', \App\Http\Controllers\API\Masters\ProductController::class)->except(['show']);
+    Route::get('products/low-stock', \App\Http\Controllers\API\Masters\ProductController::class . '@lowStock');
 });
