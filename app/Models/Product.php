@@ -12,8 +12,6 @@ class Product extends Model
     protected function casts(): array
     {
         return [
-            'cost_price' => 'decimal',
-            'selling_price' => 'decimal',
             'is_active' => 'boolean'
         ];
     }

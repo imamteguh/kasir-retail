@@ -34,6 +34,7 @@ class ProductController extends Controller
             'stock' => 'nullable|integer|min:0',
             'min_stock' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $data['store_id'] = tenant()->id;
@@ -42,6 +43,8 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
         }
+
+        $data['is_active'] = $data['is_active'] ?? false;
 
         $product = Product::create($data);
 
@@ -63,6 +66,7 @@ class ProductController extends Controller
             'stock' => 'nullable|integer|min:0',
             'min_stock' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'is_active' => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('image')) {
@@ -72,6 +76,8 @@ class ProductController extends Controller
             $data['image'] = $request->file('image')->store('products', 'public');
         }
 
+        $data['is_active'] = $data['is_active'] ?? false;
+        
         $product->update($data);
 
         return response()->json([

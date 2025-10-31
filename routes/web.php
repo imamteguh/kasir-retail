@@ -32,6 +32,7 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
     Route::group(['prefix' => 'masters'], function () {
         Route::resource('categories', \App\Http\Controllers\Masters\CategoryController::class);
         Route::resource('units', \App\Http\Controllers\Masters\UnitController::class);
+        Route::resource('products', \App\Http\Controllers\Masters\ProductController::class);
     });
 });
 
