@@ -4,12 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
   config.colors.bodyBg;
   config.colors.headingColor;
 
-  let categoryTable = document.querySelector(".datatables-categories");
+  let unitTable = document.querySelector(".datatables-units");
 
   // Inisialisasi DataTable
-  if (categoryTable) {
-    let dt = new DataTable(categoryTable, {
-      ajax: { url: "/api/categories", dataSrc: "data" },
+  if (unitTable) {
+    let dt = new DataTable(unitTable, {
+      ajax: { url: "/api/units", dataSrc: "data" },
       columns: [
         { data: "id", orderable: false, render: DataTable.render.select() }, // Checkbox
         { data: "name" },                         // Name
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         topEnd: {
           features: [
-            { search: { placeholder: "Search Category", text: "_INPUT_" } }
+            { search: { placeholder: "Search Unit", text: "_INPUT_" } }
           ]
         },
         bottomStart: { rowClass: "row mx-3 justify-content-between", features: ["info"] },
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
       language: {
         sLengthMenu: "_MENU_",
         search: "",
-        searchPlaceholder: "Search Category",
+        searchPlaceholder: "Search Unit",
         paginate: {
           next: '<i class="icon-base bx bx-chevron-right icon-18px"></i>',
           previous: '<i class="icon-base bx bx-chevron-left icon-18px"></i>'
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     idDelete = $(this).data('id');
     const name = $(this).data('name');
     let title = modalConfirmDeleteDiv.querySelector('.modal-title');
-    title.innerHTML = `Delete Category ${name} !!`;
+    title.innerHTML = `Delete Unit ${name} !!`;
     modalConfirmDelete.show();
   });
 
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (idDelete) {
       $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Loading...');
       $.ajax({
-        url: '/api/categories/' + idDelete,
+        url: '/api/units/' + idDelete,
         method: 'DELETE',
         success: function(response) {
           if (response.success) {
@@ -141,18 +141,18 @@ document.addEventListener("DOMContentLoaded", function () {
   // End delete data
 
   // Edit data
-  const modalEditDiv = document.getElementById('modalEditCategory');
+  const modalEditDiv = document.getElementById('modalEditUnit');
   const modalEdit = modalEditDiv ? new bootstrap.Modal(modalEditDiv) : null;
-  const editForm = document.querySelector('#editCategoryForm');
-  let editCategoryValidator;
+  const editForm = document.querySelector('#editUnitForm');
+  let editUnitValidator;
 
   // Init validator for edit form
   if (editForm && typeof FormValidation !== "undefined") {
-    editCategoryValidator = FormValidation.formValidation(editForm, {
+    editUnitValidator = FormValidation.formValidation(editForm, {
       fields: {
         name: {
           validators: {
-            notEmpty: { message: "Please enter category name" },
+            notEmpty: { message: "Please enter unit name" },
             stringLength: {
               max: 100,
               message: "Name must be less than 100 characters",
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Submit edit form
-  $('#editCategoryForm').on('submit', function (e) {
+  $('#editUnitForm').on('submit', function (e) {
     e.preventDefault();
     if (!editForm) return;
     const button = $(this).find('button[type="submit"]');
@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
       button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
       const formData = new FormData(editForm);
       $.ajax({
-        url: '/api/categories/' + id,
+        url: '/api/units/' + id,
         method: 'POST',
         data: formData,
         processData: false,
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
               window.location.reload();
             }, 800);
           } else {
-            toastError(response.message || 'Failed to update data');
+            toastError(response.message || 'Failed to update unit');
             button.prop('disabled', false).html('<i class="icon-base bx bx-save me-1"></i> Save Changes');
           }
         },
@@ -250,15 +250,15 @@ document.addEventListener("DOMContentLoaded", function () {
               showGlobalError($form, messages);
             }
           } else {
-            toastError('Failed to update data');
+            toastError('Failed to update unit');
           }
           button.prop('disabled', false).html('<i class="icon-base bx bx-save me-1"></i> Save Changes');
         }
       });
     };
 
-    if (editCategoryValidator) {
-      editCategoryValidator.validate().then(function (status) {
+    if (editUnitValidator) {
+      editUnitValidator.validate().then(function (status) {
         if (status === 'Valid') {
           runAjaxUpdate();
         }
@@ -269,15 +269,15 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   // End edit data
 
-  // Inisialisasi FormValidation untuk form Add Category (mirip halaman login)
-  let addCategoryForm = document.querySelector("#addNewCategoryForm");
-  let addCategoryValidator;
-  if (addCategoryForm && typeof FormValidation !== "undefined") {
-    addCategoryValidator = FormValidation.formValidation(addCategoryForm, {
+  // Inisialisasi FormValidation untuk form Add Unit
+  let addUnitForm = document.querySelector("#addNewUnitForm");
+  let addUnitValidator;
+  if (addUnitForm && typeof FormValidation !== "undefined") {
+    addUnitValidator = FormValidation.formValidation(addUnitForm, {
       fields: {
         name: {
           validators: {
-            notEmpty: { message: "Please enter category name" },
+            notEmpty: { message: "Please enter unit name" },
             stringLength: {
               max: 100,
               message: "Name must be less than 100 characters",
@@ -309,7 +309,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Helper: tampilkan alert global error (backend)
   const showGlobalError = ($form, messages) => {
-    // Pastikan tidak duplikasi
     $form.find('.global-error-alert').remove();
 
     const alertHtml = `
@@ -317,12 +316,12 @@ document.addEventListener("DOMContentLoaded", function () {
         ${messages.map(m => `<div>${m}</div>`).join('')}
       </div>
     `;
-    // Tampilkan di bagian paling atas form agar mudah terlihat
+
     $form.prepend(alertHtml);
   };
 
   // Save data
-  $('#addNewCategoryForm').on('submit', function (e) {
+  $('#addNewUnitForm').on('submit', function (e) {
     e.preventDefault();
     const button = $(this).find('button[type="submit"]');
     const form = this;
@@ -337,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function () {
       button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
       const formData = new FormData(form);
       $.ajax({
-        url: '/api/categories',
+        url: '/api/units',
         method: 'POST',
         data: formData,
         processData: false,
@@ -351,7 +350,7 @@ document.addEventListener("DOMContentLoaded", function () {
               window.location.reload();
             }, 800);
           } else {
-            toastError(response.message || 'Failed to save data');
+            toastError(response.message || 'Failed to save unit');
             button.prop('disabled', false).html('<i class="icon-base bx bx-save me-1"></i> Save');
           }
         },
@@ -376,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
               showGlobalError($form, messages);
             }
           } else {
-            toastError('Failed to save data');
+            toastError('Failed to save unit');
           }
 
           button.prop('disabled', false).html('<i class="icon-base bx bx-save me-1"></i> Save');
@@ -385,8 +384,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Validasi frontend dulu: jika lolos, baru kirim ke backend
-    if (addCategoryValidator) {
-      addCategoryValidator.validate().then(function (status) {
+    if (addUnitValidator) {
+      addUnitValidator.validate().then(function (status) {
         if (status === 'Valid') {
           runAjaxSave();
         }

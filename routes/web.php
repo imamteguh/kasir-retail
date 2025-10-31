@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Masters\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,13 +30,12 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
     Route::view('dashboard', 'dashboard')->name('dashboard');
     
     Route::group(['prefix' => 'masters'], function () {
-        Route::resource('categories', CategoryController::class);
+        Route::resource('categories', \App\Http\Controllers\Masters\CategoryController::class);
+        Route::resource('units', \App\Http\Controllers\Masters\UnitController::class);
     });
 });
 
-Route::middleware(['auth', 'store.context', 'subscription.active'])
-    ->prefix('api')
-    ->group(function () {
+Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api')->group(function () {
     Route::apiResource('categories', \App\Http\Controllers\API\Masters\CategoryController::class)->except(['show']);
     Route::apiResource('units', \App\Http\Controllers\API\Masters\UnitController::class)->except(['show']);
     Route::apiResource('products', \App\Http\Controllers\API\Masters\ProductController::class)->except(['show']);
