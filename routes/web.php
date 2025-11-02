@@ -46,4 +46,5 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api
     Route::apiResource('products', \App\Http\Controllers\API\Masters\ProductController::class)->except(['show']);
 
     Route::post('/pos', [\App\Http\Controllers\API\Sales\POSController::class, 'store'])->name('pos.store');
+    Route::get('/pos/products', [\App\Http\Controllers\API\Sales\POSController::class, 'products'])->name('pos.products');
 });

@@ -16,22 +16,7 @@
                 </div>
                 <div class="card-body">
                     <div id="productsGrid" class="row g-3">
-                        @foreach(($products ?? []) as $p)
-                            <div class="col-6 col-md-3">
-                                <div class="card shadow-none bg-transparent border h-100 product-card">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="text-truncate mb-2" title="{{ $p->name }}">{{ $p->name }}</h6>
-                                            <span class="badge bg-label-primary">Stok: {{ $p->stock }}</span>
-                                        </div>
-                                        <div class="fw-semibold mb-2">Rp {{ number_format($p->selling_price, 0, ',', '.') }}</div>
-                                        <button class="btn btn-sm btn-primary w-100 btn-add-to-cart" data-id="{{ $p->id }}" data-name="{{ $p->name }}" data-price="{{ $p->selling_price }}" data-stock="{{ $p->stock }}">
-                                            <i class="icon-base bx bx-cart-add me-1 icon-md"></i> Tambah ke Keranjang
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                        
                     </div>
                 </div>
             </div>
@@ -227,7 +212,7 @@
         function fetchProducts(){
             const search = $('#searchInput').val();
             const category_id = $('#categoryFilter').val();
-            $.get(`${baseUrl}/api/products`, { search, category_id }, function(resp){
+            $.get(`${baseUrl}/api/pos/products`, { search, category_id }, function(resp){
                 renderProducts(resp.data || []);
             });
         }

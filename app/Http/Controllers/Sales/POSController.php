@@ -11,12 +11,7 @@ class POSController extends Controller
 {
     public function index()
     {
-        return view('pos.index', [
-            'products' => Product::where('store_id', tenant()->id)
-                ->where('is_active', true)
-                ->orderBy('name')
-                ->get()
-        ]);
+        return view('pos.index');
     }
 
     public function receipt(Sale $sale)

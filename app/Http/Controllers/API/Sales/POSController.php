@@ -13,6 +13,33 @@ use Illuminate\Support\Str;
 
 class POSController extends Controller
 {
+    public function products(Request $request)
+    {
+        $query = Product::where('store_id', tenant()->id)
+            ->with(['category', 'unit'])
+            ->where('is_active', true);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        $products = $query->orderBy('name')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'success',
+            'data' => $products,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

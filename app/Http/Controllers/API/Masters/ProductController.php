@@ -12,16 +12,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::where('store_id', tenant()->id)
-            ->with(['category', 'unit'])
-            ->where('is_active', true);
-
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%");
-            });
-        }
+            ->with(['category', 'unit']);
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->input('category_id'));
