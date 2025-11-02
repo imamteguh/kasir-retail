@@ -61,7 +61,6 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-        <!-- Dashboards -->
         <li class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
             <a href="/dashboard" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home"></i>
@@ -70,7 +69,6 @@
                 </div>
             </a>
         </li>
-        <!-- POS -->
         <li class="menu-item {{ request()->is('pos') ? 'active' : '' }}">
             <a href="/pos" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cart"></i>
@@ -78,6 +76,24 @@
                     POS
                 </div>
             </a>
+        </li>
+        <li class="menu-item {{ request()->is('inventory/*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle ">
+                <i class="menu-icon tf-icons bx bx-package"></i>
+                <div class="text-truncate">Inventory</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->is('inventory/purchases*') ? 'active' : '' }}">
+                    <a href="/inventory/purchases" class="menu-link">
+                        <div class="text-truncate">Purchases</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->is('inventory/suppliers*') ? 'active' : '' }}">
+                    <a href="/inventory/suppliers" class="menu-link">
+                        <div class="text-truncate">Suppliers</div>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="menu-item {{ request()->is('reports/*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle ">
@@ -87,7 +103,7 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->is('reports/sales*') ? 'active' : '' }}">
                     <a href="/reports/sales" class="menu-link">
-                        <div class="text-truncate">Sales Recap</div>
+                        <div class="text-truncate">Sales</div>
                     </a>
                 </li>
             </ul>

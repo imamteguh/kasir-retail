@@ -28,30 +28,35 @@ Route::middleware(['guest'])->group(function () {
 Route::get('email/verify/{id}/{hash}', [RegisterController::class, 'verify'])->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::middleware(['auth', 'store.context', 'subscription.active'])->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::view('dashboard', 'dashboard')->name('dashboard');
     
     Route::group(['prefix' => 'masters'], function () {
-        Route::resource('categories', \App\Http\Controllers\Masters\CategoryController::class);
-        Route::resource('units', \App\Http\Controllers\Masters\UnitController::class);
-        Route::resource('products', \App\Http\Controllers\Masters\ProductController::class);
+        Route::get('categories', [\App\Http\Controllers\Masters\CategoryController::class, 'index']);
+        Route::get('units', [\App\Http\Controllers\Masters\UnitController::class, 'index']);
+        Route::get('products', [\App\Http\Controllers\Masters\ProductController::class, 'index']);
     });
 
-    Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
-    Route::get('/pos/receipt/{sale}', [POSController::class, 'receipt'])->name('pos.receipt');
+    Route::group(['prefix' => 'inventory'], function () {
+        Route::get('suppliers', [\App\Http\Controllers\Inventory\SupplierController::class, 'index']);
+    });
 
-    Route::get('/reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
-    Route::get('/reports/sales/pdf', [SalesReportController::class, 'pdf'])->name('reports.sales.pdf');
+    Route::get('pos', [POSController::class, 'index'])->name('pos.index');
+    Route::get('pos/receipt/{sale}', [POSController::class, 'receipt'])->name('pos.receipt');
+
+    Route::get('reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
+    Route::get('reports/sales/pdf', [SalesReportController::class, 'pdf'])->name('reports.sales.pdf');
 });
 
 Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api')->group(function () {
     Route::apiResource('categories', \App\Http\Controllers\API\Masters\CategoryController::class)->except(['show']);
     Route::apiResource('units', \App\Http\Controllers\API\Masters\UnitController::class)->except(['show']);
     Route::apiResource('products', \App\Http\Controllers\API\Masters\ProductController::class)->except(['show']);
+    Route::apiResource('suppliers', \App\Http\Controllers\API\Inventory\SupplierController::class)->except(['show']);
 
-    Route::post('/pos', [\App\Http\Controllers\API\Sales\POSController::class, 'store'])->name('pos.store');
-    Route::get('/pos/products', [\App\Http\Controllers\API\Sales\POSController::class, 'products'])->name('pos.products');
+    Route::post('pos', [\App\Http\Controllers\API\Sales\POSController::class, 'store'])->name('pos.store');
+    Route::get('pos/products', [\App\Http\Controllers\API\Sales\POSController::class, 'products'])->name('pos.products');
 
-    Route::get('/pos/reports/daily', [\App\Http\Controllers\API\Sales\ReportController::class, 'daily'])->name('pos.reports.daily');
-    Route::get('/pos/reports/monthly', [\App\Http\Controllers\API\Sales\ReportController::class, 'monthly'])->name('pos.reports.monthly');
+    Route::get('pos/reports/daily', [\App\Http\Controllers\API\Sales\ReportController::class, 'daily'])->name('pos.reports.daily');
+    Route::get('pos/reports/monthly', [\App\Http\Controllers\API\Sales\ReportController::class, 'monthly'])->name('pos.reports.monthly');
 });
