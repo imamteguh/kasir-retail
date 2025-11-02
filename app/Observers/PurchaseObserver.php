@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseObserver
 {
-    public function created(Purchase $purchase): void
+    public function saved(Purchase $purchase): void
     {
         DB::transaction(function () use ($purchase) {
             // Pastikan item sudah ada

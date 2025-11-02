@@ -39,6 +39,7 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
 
     Route::group(['prefix' => 'inventory'], function () {
         Route::get('suppliers', [\App\Http\Controllers\Inventory\SupplierController::class, 'index']);
+        Route::get('purchases', [\App\Http\Controllers\Inventory\PurchaseController::class, 'index']);
     });
 
     Route::get('pos', [POSController::class, 'index'])->name('pos.index');
@@ -53,6 +54,7 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api
     Route::apiResource('units', \App\Http\Controllers\API\Masters\UnitController::class)->except(['show']);
     Route::apiResource('products', \App\Http\Controllers\API\Masters\ProductController::class)->except(['show']);
     Route::apiResource('suppliers', \App\Http\Controllers\API\Inventory\SupplierController::class)->except(['show']);
+    Route::apiResource('purchases', \App\Http\Controllers\API\Inventory\PurchaseController::class)->except(['show']);
 
     Route::post('pos', [\App\Http\Controllers\API\Sales\POSController::class, 'store'])->name('pos.store');
     Route::get('pos/products', [\App\Http\Controllers\API\Sales\POSController::class, 'products'])->name('pos.products');
