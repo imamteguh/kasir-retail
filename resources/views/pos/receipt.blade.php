@@ -33,4 +33,10 @@
     <hr>
     <p class="center">Terima kasih telah berbelanja!</p>
 </body>
+<script>
+    // Auto print when the receipt page loads
+    window.addEventListener('load', function(){
+        window.print();
+    });
+</script>
 </html>

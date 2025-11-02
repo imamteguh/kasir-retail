@@ -9,9 +9,23 @@ use Illuminate\Support\Facades\DB;
 
 class SaleObserver
 {
-    public function created(Sale $sale): void
+    public function saved(Sale $sale): void
     {
         DB::transaction(function () use ($sale) {
+            // Pastikan item sudah ada
+            if (!$sale->items()->exists()) {
+                return;
+            }
+
+            // Hindari penyesuaian ganda untuk transaksi yang sama
+            $alreadyMoved = StockMovement::where('reference_type', 'sale')
+                ->where('reference_id', $sale->id)
+                ->exists();
+
+            if ($alreadyMoved) {
+                return;
+            }
+
             foreach ($sale->items as $item) {
                 $product = Product::find($item->product_id);
 

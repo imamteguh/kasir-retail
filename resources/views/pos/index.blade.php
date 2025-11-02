@@ -37,7 +37,7 @@
             </div>
 
             <!-- Offcanvas Keranjang -->
-            <div class="offcanvas offcanvas-end" style="width: 700px" tabindex="-1" id="offcanvasCart" aria-labelledby="offcanvasCartLabel">
+            <div class="offcanvas offcanvas-end" style="width: 650px" tabindex="-1" id="offcanvasCart" aria-labelledby="offcanvasCartLabel">
                 <!-- Offcanvas Header -->
                 <div class="offcanvas-header py-6">
                     <h5 class="offcanvas-title" id="offcanvasCartLabel">Keranjang</h5>
@@ -147,16 +147,28 @@
             updateTotals();
         }
 
+        function computeTotal(){
+            const subtotal = cart.reduce((acc, i) => acc + (i.qty * i.price), 0);
+            const discount = Number($('#discountInput').val() || 0);
+            return Math.max(0, subtotal - discount);
+        }
+
         function updateTotals(){
             const subtotal = cart.reduce((acc, i) => acc + (i.qty * i.price), 0);
             const discount = Number($('#discountInput').val() || 0);
             const total = Math.max(0, subtotal - discount);
+
+            // Auto set paid to total for non-cash methods
+            const method = $('#paymentMethod').val();
+            if (method === 'transfer' || method === 'qris') {
+                $('#paidInput').val(total);
+            }
+
             const paid = Number($('#paidInput').val() || 0);
             const change = Math.max(0, paid - total);
 
             $('#subtotalText').text(toRp(subtotal));
             $('#totalText').text(toRp(total));
-            // Hapus sinkronisasi modal: totalTextModal sudah tidak dipakai
             $('#changeText').text(toRp(change));
         }
 
@@ -257,6 +269,18 @@
 
         $('#discountInput, #paidInput').on('input', updateTotals);
 
+        // Auto amount and readonly toggle based on payment method
+        $('#paymentMethod').on('change', function(){
+            const method = $(this).val();
+            const total = computeTotal();
+            if (method === 'transfer' || method === 'qris') {
+                $('#paidInput').val(total).prop('readonly', true);
+            } else {
+                $('#paidInput').prop('readonly', false);
+            }
+            updateTotals();
+        });
+
         $('#btnClearCart').on('click', function(){
             cart = [];
             renderCart();
@@ -276,20 +300,34 @@
             const items = cart.map(i => ({ product_id: i.id, qty: i.qty, price: i.price }));
             const discount = Number($('#discountInput').val() || 0);
             const payment_method = $('#paymentMethod').val();
-
-            $(this).prop('disabled', true).addClass('disabled');
+            const $btn = $(this);
+            const originalHtml = $btn.html();
+            $btn.prop('disabled', true).addClass('disabled').html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Memproses...');
             $.post(`${baseUrl}/api/pos`, { items, discount, payment_method })
                 .done(function(resp){
                     toastSuccess('Transaksi berhasil disimpan');
+                    // Reset cart
                     cart = [];
                     renderCart();
+                    // Reset payment form
+                    $('#discountInput').val(0);
+                    $('#paymentMethod').val('cash').trigger('change');
+                    $('#paidInput').val(0).prop('readonly', false);
+                    updateTotals();
+                    // Close offcanvas
+                    try { bootstrap.Offcanvas.getOrCreateInstance('#offcanvasCart').hide(); } catch(e) {}
+                    // Open receipt and auto print
+                    const saleId = resp?.data?.id;
+                    if (saleId) {
+                        window.open(`${baseUrl}/pos/receipt/${saleId}`, '_blank');
+                    }
                 })
                 .fail(function(xhr){
                     const msg = xhr.responseJSON?.message || 'Gagal menyimpan transaksi';
                     toastError(msg);
                 })
                 .always(() => {
-                    $('#btnCheckout').prop('disabled', false).removeClass('disabled');
+                    $btn.prop('disabled', false).removeClass('disabled').html(originalHtml);
                 });
         });
 

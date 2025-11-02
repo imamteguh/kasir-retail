@@ -12,6 +12,20 @@ class PurchaseObserver
     public function created(Purchase $purchase): void
     {
         DB::transaction(function () use ($purchase) {
+            // Pastikan item sudah ada
+            if (!$purchase->items()->exists()) {
+                return;
+            }
+
+            // Hindari penyesuaian ganda untuk transaksi yang sama
+            $alreadyMoved = StockMovement::where('reference_type', 'purchase')
+                ->where('reference_id', $purchase->id)
+                ->exists();
+
+            if ($alreadyMoved) {
+                return;
+            }
+
             foreach ($purchase->items as $item) {
                 $product = Product::find($item->product_id);
 

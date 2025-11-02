@@ -37,6 +37,7 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
     });
 
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
+    Route::get('/pos/receipt/{sale}', [POSController::class, 'receipt'])->name('pos.receipt');
 });
 
 Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api')->group(function () {
