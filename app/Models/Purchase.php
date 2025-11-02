@@ -13,8 +13,7 @@ class Purchase extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date',
-            'total' => 'decimal'
+            'date' => 'date'
         ];
     }
 

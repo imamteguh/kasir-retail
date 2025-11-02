@@ -13,18 +13,19 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
-            $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete();
-            $table->string('invoice_number');
-            $table->date('date');
-            $table->decimal('total', 12, 2);
+            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('supplier_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('invoice_number')->unique();
+            $table->date('date')->default(now());
+            $table->decimal('total', 12, 2)->default(0);
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
 
         Schema::create('purchase_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_id')->constrained('purchases')->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->foreignId('purchase_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->integer('qty');
             $table->decimal('cost_price', 12, 2);
             $table->decimal('subtotal', 12, 2);

@@ -9,14 +9,6 @@ class PurchaseItem extends Model
 {
     protected $guarded = ['id'];
 
-    protected function casts(): array
-    {
-        return [
-            'cost_price' => 'decimal',
-            'subtotal' => 'decimal'
-        ];
-    }
-
     public function purchase(): BelongsTo
     {
         return $this->belongsTo(Purchase::class);
