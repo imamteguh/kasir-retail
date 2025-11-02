@@ -13,9 +13,7 @@ class Sale extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'datetime',
-            'total' => 'decimal',
-            'discount' => 'decimal'
+            'date' => 'datetime'
         ];
     }
 

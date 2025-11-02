@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Sales\POSController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,11 +35,14 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
         Route::resource('units', \App\Http\Controllers\Masters\UnitController::class);
         Route::resource('products', \App\Http\Controllers\Masters\ProductController::class);
     });
+
+    Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
 });
 
 Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api')->group(function () {
     Route::apiResource('categories', \App\Http\Controllers\API\Masters\CategoryController::class)->except(['show']);
     Route::apiResource('units', \App\Http\Controllers\API\Masters\UnitController::class)->except(['show']);
     Route::apiResource('products', \App\Http\Controllers\API\Masters\ProductController::class)->except(['show']);
-    Route::get('products/low-stock', \App\Http\Controllers\API\Masters\ProductController::class . '@lowStock');
+
+    Route::post('/pos', [\App\Http\Controllers\API\Sales\POSController::class, 'store'])->name('pos.store');
 });

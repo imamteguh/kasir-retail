@@ -140,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     
     window.showToast = function (title, message, type) {
         let toast;
+        toastPlacement.classList.remove('bg-success', 'bg-danger');
         toastPlacement.classList.add(type);
         toastHeader.innerHTML = `<i class="icon-base bx bx-bell me-2"></i><div class="me-auto fw-medium">${title}</div>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>`;

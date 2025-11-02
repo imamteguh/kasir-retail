@@ -13,20 +13,20 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
-            $table->string('invoice_number');
-            $table->dateTime('date');
-            $table->decimal('total', 12, 2);
+            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            $table->string('invoice_number')->unique();
+            $table->dateTime('date')->default(now());
+            $table->decimal('total', 12, 2)->default(0);
             $table->decimal('discount', 12, 2)->default(0);
             $table->enum('payment_method', ['cash', 'transfer', 'qris'])->default('cash');
-            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
 
         Schema::create('sale_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sale_id')->constrained('sales')->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->foreignId('sale_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->integer('qty');
             $table->decimal('price', 12, 2);
             $table->decimal('subtotal', 12, 2);

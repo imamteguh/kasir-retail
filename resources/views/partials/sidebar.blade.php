@@ -70,6 +70,15 @@
                 </div>
             </a>
         </li>
+        <!-- POS -->
+        <li class="menu-item {{ request()->is('pos') ? 'active' : '' }}">
+            <a href="/pos" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-cart"></i>
+                <div class="text-truncate">
+                    POS
+                </div>
+            </a>
+        </li>
         <li class="menu-item {{ request()->is('masters/*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle ">
                 <i class="menu-icon tf-icons bx bx-layer"></i>

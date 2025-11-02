@@ -11,10 +11,23 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::where('store_id', tenant()->id)
+        $query = Product::where('store_id', tenant()->id)
             ->with(['category', 'unit'])
-            ->orderBy('name')
-            ->get();
+            ->where('is_active', true);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        $products = $query->orderBy('name')->get();
 
         return response()->json([
             'success' => true,
