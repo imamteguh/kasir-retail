@@ -28,8 +28,11 @@ class ReportService
      */
     public function purchaseReport(int $storeId, $startDate, $endDate)
     {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end   = Carbon::parse($endDate)->endOfDay();
+
         return Purchase::where('store_id', $storeId)
-            ->whereBetween('date', [$startDate, $endDate])
+            ->whereBetween('date', [$start, $end])
             ->with('items.product')
             ->get();
     }

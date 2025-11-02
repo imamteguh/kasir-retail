@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Sales\POSController;
 use App\Http\Controllers\Sales\ReportController as SalesReportController;
+use App\Http\Controllers\Inventory\ReportController as InventoryReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,6 +48,9 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
 
     Route::get('reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
     Route::get('reports/sales/pdf', [SalesReportController::class, 'pdf'])->name('reports.sales.pdf');
+
+    Route::get('reports/purchases', [InventoryReportController::class, 'index'])->name('reports.purchases');
+    Route::get('reports/purchases/pdf', [InventoryReportController::class, 'pdf'])->name('reports.purchases.pdf');
 });
 
 Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api')->group(function () {

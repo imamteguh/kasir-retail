@@ -106,6 +106,11 @@
                         <div class="text-truncate">Sales</div>
                     </a>
                 </li>
+                <li class="menu-item {{ request()->is('reports/purchases*') ? 'active' : '' }}">
+                    <a href="/reports/purchases" class="menu-link">
+                        <div class="text-truncate">Purchases</div>
+                    </a>
+                </li>
             </ul>
         </li>
         <li class="menu-item {{ request()->is('masters/*') ? 'active open' : '' }}">
