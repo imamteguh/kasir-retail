@@ -79,6 +79,19 @@
                 </div>
             </a>
         </li>
+        <li class="menu-item {{ request()->is('reports/*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle ">
+                <i class="menu-icon tf-icons bx bx-bar-chart-square"></i>
+                <div class="text-truncate">Reports</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->is('reports/sales*') ? 'active' : '' }}">
+                    <a href="/reports/sales" class="menu-link">
+                        <div class="text-truncate">Sales Recap</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="menu-item {{ request()->is('masters/*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle ">
                 <i class="menu-icon tf-icons bx bx-layer"></i>

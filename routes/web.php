@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Sales\POSController;
+use App\Http\Controllers\Sales\ReportController as SalesReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -38,6 +39,9 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
 
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::get('/pos/receipt/{sale}', [POSController::class, 'receipt'])->name('pos.receipt');
+
+    Route::get('/reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
+    Route::get('/reports/sales/pdf', [SalesReportController::class, 'pdf'])->name('reports.sales.pdf');
 });
 
 Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api')->group(function () {
@@ -47,4 +51,7 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api
 
     Route::post('/pos', [\App\Http\Controllers\API\Sales\POSController::class, 'store'])->name('pos.store');
     Route::get('/pos/products', [\App\Http\Controllers\API\Sales\POSController::class, 'products'])->name('pos.products');
+
+    Route::get('/pos/reports/daily', [\App\Http\Controllers\API\Sales\ReportController::class, 'daily'])->name('pos.reports.daily');
+    Route::get('/pos/reports/monthly', [\App\Http\Controllers\API\Sales\ReportController::class, 'monthly'])->name('pos.reports.monthly');
 });

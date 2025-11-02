@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Sale;
 use App\Models\Purchase;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ReportService
 {
@@ -13,8 +14,11 @@ class ReportService
      */
     public function salesReport(int $storeId, $startDate, $endDate)
     {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end   = Carbon::parse($endDate)->endOfDay();
+
         return Sale::where('store_id', $storeId)
-            ->whereBetween('date', [$startDate, $endDate])
+            ->whereBetween('date', [$start, $end])
             ->with('items.product')
             ->get();
     }
@@ -36,7 +40,7 @@ class ReportService
     public function profitLossReport(int $storeId, $startDate, $endDate)
     {
         $sales = Sale::where('store_id', $storeId)
-            ->whereBetween('date', [$startDate, $endDate])
+            ->whereBetween('date', [Carbon::parse($startDate)->startOfDay(), Carbon::parse($endDate)->endOfDay()])
             ->with('items.product')
             ->get();
 

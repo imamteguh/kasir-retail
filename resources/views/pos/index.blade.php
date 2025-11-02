@@ -16,7 +16,7 @@
                 </div>
                 <div class="card-body">
                     <div id="productsGrid" class="row g-3">
-                        
+                        {{-- Product Data --}}
                     </div>
                 </div>
             </div>
@@ -158,12 +158,17 @@
         }
 
         function addToCart(p){
+            const stock = Number(p.stock || 0);
+            if (stock <= 0) {
+                toastError(`Stok "${p.name}" habis`);
+                return;
+            }
             const idx = cart.findIndex(i => i.id === p.id);
             if (idx >= 0) {
                 const nextQty = cart[idx].qty + 1;
-                cart[idx].qty = Math.min(nextQty, p.stock);
+                cart[idx].qty = Math.min(nextQty, stock);
             } else {
-                cart.push({ id: p.id, name: p.name, price: Number(p.price), stock: Number(p.stock||0), qty: 1 });
+                cart.push({ id: p.id, name: p.name, price: Number(p.price), stock: stock, qty: Math.min(1, stock) });
             }
             toastSuccess(`"${p.name}" ditambahkan ke keranjang.`);
             renderCart();
@@ -190,17 +195,23 @@
                 return;
             }
             products.forEach(p => {
+                const stock = Number(p.stock ?? 0);
+                const outOfStock = stock <= 0;
+                const btnDisabledAttr = outOfStock ? 'disabled' : '';
+                const btnClass = outOfStock ? 'btn-secondary disabled' : 'btn-primary btn-add-to-cart';
+                const btnIcon = outOfStock ? 'bx-error' : 'bx-cart-add';
+                const btnText = outOfStock ? 'Stok Habis' : 'Tambah ke Keranjang';
                 $grid.append(
                     `<div class="col-6 col-md-3">
                         <div class="card shadow-none bg-transparent border h-100 product-card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h6 class="text-truncate mb-2" title="${p.name}">${p.name}</h6>
-                                    <span class="badge bg-label-primary">Stok: ${p.stock ?? 0}</span>
+                                    <span class="badge ${outOfStock ? 'bg-label-danger' : 'bg-label-primary'}">Stok: ${stock}</span>
                                 </div>
                                 <div class="fw-semibold mb-2">${toRp(p.selling_price)}</div>
-                                <button class="btn btn-sm btn-primary w-100 btn-add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.selling_price}" data-stock="${p.stock ?? 0}">
-                                    <i class="icon-base bx bx-cart-add icon-md me-1"></i> Tambah ke Keranjang
+                                <button class="btn btn-sm w-100 ${btnClass}" ${btnDisabledAttr} data-id="${p.id}" data-name="${p.name}" data-price="${p.selling_price}" data-stock="${stock}">
+                                    <i class="icon-base bx ${btnIcon} icon-md me-1"></i> ${btnText}
                                 </button>
                             </div>
                         </div>
@@ -304,7 +315,8 @@
                     // Open receipt and auto print
                     const saleId = resp?.data?.id;
                     if (saleId) {
-                        window.open(`${baseUrl}/pos/receipt/${saleId}`, '_blank');
+                        const paidVal = Number($('#paidInput').val() || 0);
+                        window.open(`${baseUrl}/pos/receipt/${saleId}?paid=${paidVal}`, '_blank');
                     }
                 })
                 .fail(function(xhr){
