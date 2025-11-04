@@ -51,6 +51,10 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->group(funct
 
     Route::get('reports/purchases', [InventoryReportController::class, 'index'])->name('reports.purchases');
     Route::get('reports/purchases/pdf', [InventoryReportController::class, 'pdf'])->name('reports.purchases.pdf');
+
+    // Profit & Loss report page and PDF
+    Route::get('reports/profit-loss', [SalesReportController::class, 'profitLoss'])->name('reports.profit-loss');
+    Route::get('reports/profit-loss/pdf', [SalesReportController::class, 'profitLossPdf'])->name('reports.profit-loss.pdf');
 });
 
 Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api')->group(function () {
@@ -65,4 +69,5 @@ Route::middleware(['auth', 'store.context', 'subscription.active'])->prefix('api
 
     Route::get('pos/reports/daily', [\App\Http\Controllers\API\Sales\ReportController::class, 'daily'])->name('pos.reports.daily');
     Route::get('pos/reports/monthly', [\App\Http\Controllers\API\Sales\ReportController::class, 'monthly'])->name('pos.reports.monthly');
+    Route::get('pos/reports/profit-loss', [\App\Http\Controllers\API\Sales\ReportController::class, 'profitLoss'])->name('pos.reports.profit-loss');
 });

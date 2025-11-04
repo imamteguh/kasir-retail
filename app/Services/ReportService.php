@@ -65,6 +65,11 @@ class ReportService
         $profit = $totalSales - $totalCost;
 
         return [
+            'store_id' => $storeId,
+            'period' => [
+                'start' => $startDate,
+                'end' => $endDate,
+            ],
             'total_sales'    => $totalSales,
             'total_purchase' => $totalPurchase,
             'total_cost'     => $totalCost,

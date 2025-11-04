@@ -4,10 +4,38 @@ namespace App\Http\Controllers\API\Sales;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sale;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    protected $reportService;
+
+    public function __construct(ReportService $reportService)
+    {
+        $this->reportService = $reportService;
+    }
+
+    public function profitLoss(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date'   => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $store = tenant();
+        $report = $this->reportService->profitLossReport(
+            $store->id,
+            $request->start_date,
+            $request->end_date
+        );
+
+        return response()->json([
+            'message' => 'Laporan laba rugi berhasil dihasilkan',
+            'data' => $report
+        ]);
+    }
+    
     public function daily()
     {
         $store = tenant();
